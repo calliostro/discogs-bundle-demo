@@ -1,0 +1,8 @@
+hwi_oauth:
+  firewall_names: [main]
+
+  resource_owners:
+    discogs:
+      type: discogs
+      client_id: '%env(resolve:CONSUMER_KEY)%'
+      client_secret: '%env(resolve:CONSUMER_SECRET)%'
