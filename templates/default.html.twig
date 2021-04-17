@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}calliostro/discogs-bundle-demo{% endblock %}
+
+{% block body %}
+    <h1>calliostro/discogs-bundle-demo</h1>
+    <p>This page shows who you’re authenticated as, and it also doubles as a good sanity check to ensure that you’re using OAuth correctly.</p>
+    <table>
+        <tbody>
+        <tr><td>username:</td><td>{{ identity.username }}</td></tr>
+        <tr><td>resource_url:</td><td><a href="{{ identity.resource_url }}" target="_blank">{{ identity.resource_url }}</a></td></tr>
+        <tr><td>consumer_name:</td><td>{{ identity.consumer_name }}</td></tr>
+        </tbody>
+    </table>
+{% endblock body %}

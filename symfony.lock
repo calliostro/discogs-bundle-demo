@@ -1,15 +1,33 @@
 {
+    "calliostro/discogs-bundle": {
+        "version": "v2.0.0"
+    },
+    "calliostro/php-discogs-api": {
+        "version": "v2.0.1"
+    },
     "clue/stream-filter": {
         "version": "v1.5.0"
     },
+    "guzzlehttp/command": {
+        "version": "1.1.0"
+    },
     "guzzlehttp/guzzle": {
         "version": "7.3.0"
+    },
+    "guzzlehttp/guzzle-services": {
+        "version": "1.2.0"
+    },
+    "guzzlehttp/oauth-subscriber": {
+        "version": "0.4.0"
     },
     "guzzlehttp/promises": {
         "version": "1.4.1"
     },
     "guzzlehttp/psr7": {
         "version": "1.8.1"
+    },
+    "guzzlehttp/uri-template": {
+        "version": "v0.2.0"
     },
     "hwi/oauth-bundle": {
         "version": "0.6",
