@@ -4,5 +4,5 @@ hwi_oauth:
   resource_owners:
     discogs:
       type: discogs
-      client_id: '%env(resolve:CONSUMER_KEY)%'
-      client_secret: '%env(resolve:CONSUMER_SECRET)%'
+      client_id: '%env(CONSUMER_KEY)%'
+      client_secret: '%env(CONSUMER_SECRET)%'

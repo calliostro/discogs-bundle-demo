@@ -1,6 +1,9 @@
 calliostro_discogs:
 
-  user_agent: 'CalliostroDiscogsBundle/2.0 +https://github.com/calliostro/php-discogs-api'
+  user_agent: 'CalliostroDiscogsBundleDemo/3.0 +calliostro/discogs-bundle-demo'
+
+  consumer_key: '%env(CONSUMER_KEY)%'
+  consumer_secret: '%env(CONSUMER_SECRET)%'
 
   throttle:
     enabled: true
@@ -8,6 +11,4 @@ calliostro_discogs:
 
   oauth:
     enabled: true
-    consumer_key: '%env(resolve:CONSUMER_KEY)%'
-    consumer_secret: '%env(resolve:CONSUMER_SECRET)%'
     token_provider: calliostro_discogs.hwi_oauth_token_provider
