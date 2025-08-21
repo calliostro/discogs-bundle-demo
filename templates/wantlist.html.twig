@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wantlist - Discogs Bundle Demo{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('default_index') }}">Home</a></li>
+                <li class="breadcrumb-item active">Wantlist</li>
+            </ol>
+        </nav>
+
+        <h1>Your Discogs Wantlist</h1>
+        <p class="lead">Wantlist of <strong>{{ username }}</strong></p>
+
+        {% if wantlist is defined and wantlist.wants|length > 0 %}
+            <p class="text-muted mb-3">
+                {{ wantlist.wants|length }} of {{ wantlist.pagination.items }} entries
+                (Page {{ wantlist.pagination.page }} of {{ wantlist.pagination.pages }})
+            </p>
+
+            <div class="row">
+            {% for want in wantlist.wants %}
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100">
+                        {% if want.basic_information.thumb is defined and want.basic_information.thumb %}
+                            <img src="{{ want.basic_information.thumb }}" class="card-img-top" alt="{{ want.basic_information.title }}" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+
+                        <div class="card-body">
+                            <h6 class="card-title">{{ want.basic_information.title }}</h6>
+
+                            {% if want.basic_information.artists is defined %}
+                                <p class="card-text">
+                                    <strong>Artist:</strong>
+                                    {% for artist in want.basic_information.artists %}
+                                        <a href="{{ path('artist_detail', {'id': artist.id}) }}">{{ artist.name }}</a>
+                                        {% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+
+                            {% if want.basic_information.year is defined %}
+                                <p class="card-text"><small class="text-muted">Year: {{ want.basic_information.year }}</small></p>
+                            {% endif %}
+
+                            {% if want.date_added is defined %}
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        Added: {{ want.date_added|date('m/d/Y H:i') }}
+                                    </small>
+                                </p>
+                            {% endif %}
+
+                            {% if want.notes is defined and want.notes %}
+                                <p class="card-text">
+                                    <small class="text-info">
+                                        <strong>Notes:</strong> {{ want.notes }}
+                                    </small>
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-footer">
+                            <a href="{{ path('release_detail', {'id': want.basic_information.id}) }}" class="btn btn-sm btn-primary">
+                                View Details
+                            </a>
+                            <a href="https://www.discogs.com/release/{{ want.basic_information.id }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                View on Discogs
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading">No Wantlist Items Found</h4>
+                <p>Your Discogs wantlist appears to be empty or private.</p>
+                <hr>
+                <p class="mb-0">Visit <a href="https://www.discogs.com" target="_blank">Discogs.com</a> to manage your wantlist.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock body %}

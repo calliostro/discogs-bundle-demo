@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Random Releases - Discogs Bundle Demo{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('default_index') }}">Home</a></li>
+                <li class="breadcrumb-item active">Random Releases</li>
+            </ol>
+        </nav>
+
+        <h1>Random Releases</h1>
+        <p class="lead">Discover releases by <strong>{{ artist }}</strong></p>
+
+        <div class="mb-3">
+            <a href="{{ path('random_releases') }}" class="btn btn-success">
+                🎲 Get New Random Releases
+            </a>
+        </div>
+
+        {% if releases is defined and releases.results|length > 0 %}
+            <p class="text-muted mb-3">
+                {{ releases.results|length }} of {{ releases.pagination.items }} results
+                (Page {{ releases.pagination.page }} of {{ releases.pagination.pages }})
+            </p>
+
+            <div class="row">
+            {% for release in releases.results %}
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100">
+                        {% if release.thumb is defined and release.thumb %}
+                            <img src="{{ release.thumb }}" class="card-img-top" alt="{{ release.title }}" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+
+                        <div class="card-body">
+                            <h6 class="card-title">{{ release.title }}</h6>
+
+                            {% if release.type is defined %}
+                                <span class="badge bg-secondary mb-2">{{ release.type|upper }}</span>
+                            {% endif %}
+
+                            {% if release.year is defined %}
+                                <p class="card-text"><small class="text-muted">Year: {{ release.year }}</small></p>
+                            {% endif %}
+
+                            {% if release.label is defined %}
+                                <p class="card-text"><small class="text-muted">Label: {{ release.label|join(', ') }}</small></p>
+                            {% endif %}
+
+                            {% if release.catno is defined %}
+                                <p class="card-text"><small class="text-muted">Catalog Number: {{ release.catno }}</small></p>
+                            {% endif %}
+
+                            {% if release.format is defined %}
+                                <p class="card-text"><small class="text-muted">Format: {{ release.format|join(', ') }}</small></p>
+                            {% endif %}
+
+                            {% if release.country is defined %}
+                                <p class="card-text"><small class="text-muted">Country: {{ release.country }}</small></p>
+                            {% endif %}
+
+                            {% if release.genre is defined %}
+                                <p class="card-text"><small class="text-muted">Genre: {{ release.genre|join(', ') }}</small></p>
+                            {% endif %}
+
+                            {% if release.style is defined %}
+                                <p class="card-text"><small class="text-muted">Style: {{ release.style|join(', ') }}</small></p>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-footer">
+                            <a href="{{ path('release_detail', {'id': release.id}) }}" class="btn btn-sm btn-primary">
+                                View Details
+                            </a>
+                            <a href="{{ release.resource_url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                View on Discogs
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+
+            <div class="mt-4 text-center">
+                <p class="text-muted">
+                    Want to see more from {{ artist }}?
+                    <a href="{{ path('search', {'q': artist, 'type': 'release'}) }}">Search all {{ artist }} releases</a>
+                </p>
+            </div>
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">No Releases Found</h4>
+                <p>No releases were found for "{{ artist }}".</p>
+                <hr>
+                <p class="mb-0">
+                    <a href="{{ path('random_releases') }}" class="btn btn-primary">
+                        🎲 Try Other Random Releases
+                    </a>
+                </p>
+            </div>
+        {% endif %}
+
+        <div class="mt-5">
+            <h4>Discover Other Artists:</h4>
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="{{ path('search', {'q': 'Pink Floyd', 'type': 'release'}) }}" class="btn btn-outline-primary btn-sm me-2 mb-2">Pink Floyd</a>
+                    <a href="{{ path('search', {'q': 'The Beatles', 'type': 'release'}) }}" class="btn btn-outline-primary btn-sm me-2 mb-2">The Beatles</a>
+                    <a href="{{ path('search', {'q': 'Led Zeppelin', 'type': 'release'}) }}" class="btn btn-outline-primary btn-sm me-2 mb-2">Led Zeppelin</a>
+                    <a href="{{ path('search', {'q': 'Bob Dylan', 'type': 'release'}) }}" class="btn btn-outline-primary btn-sm me-2 mb-2">Bob Dylan</a>
+                    <a href="{{ path('search', {'q': 'David Bowie', 'type': 'release'}) }}" class="btn btn-outline-primary btn-sm me-2 mb-2">David Bowie</a>
+                    <a href="{{ path('search', {'q': 'Rolling Stones', 'type': 'release'}) }}" class="btn btn-outline-primary btn-sm me-2 mb-2">Rolling Stones</a>
+                    <a href="{{ path('search', {'q': 'Kraftwerk', 'type': 'release'}) }}" class="btn btn-outline-primary btn-sm me-2 mb-2">Kraftwerk</a>
+                    <a href="{{ path('search', {'q': 'Daft Punk', 'type': 'release'}) }}" class="btn btn-outline-primary btn-sm me-2 mb-2">Daft Punk</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

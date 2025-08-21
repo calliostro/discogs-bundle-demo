@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Search - Discogs Bundle Demo{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('default_index') }}">Home</a></li>
+                <li class="breadcrumb-item active">Search</li>
+            </ol>
+        </nav>
+
+        <h1>Search Discogs Database</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <form method="post" action="{{ path('search') }}">
+                    <div class="mb-3">
+                        <label for="q" class="form-label">Search Query:</label>
+                        <input type="text" class="form-control" id="q" name="q" value="{{ searchQuery }}" placeholder="e.g. Pink Floyd, Abbey Road, ...">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Search Type:</label>
+                        <select class="form-select" id="type" name="type">
+                            <option value="all" {% if searchType == 'all' %}selected{% endif %}>All</option>
+                            <option value="artist" {% if searchType == 'artist' %}selected{% endif %}>Artists</option>
+                            <option value="release" {% if searchType == 'release' %}selected{% endif %}>Releases</option>
+                            <option value="label" {% if searchType == 'label' %}selected{% endif %}>Labels</option>
+                            <option value="master" {% if searchType == 'master' %}selected{% endif %}>Master Releases</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+
+            <div class="col-md-6">
+                <h5>Example Searches:</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{{ path('search', {'q': 'Pink Floyd', 'type': 'artist'}) }}">Pink Floyd (Artist)</a></li>
+                    <li><a href="{{ path('search', {'q': 'The Dark Side of the Moon', 'type': 'release'}) }}">The Dark Side of the Moon (Release)</a></li>
+                    <li><a href="{{ path('search', {'q': 'Blue Note', 'type': 'label'}) }}">Blue Note (Label)</a></li>
+                    <li><a href="{{ path('search', {'q': 'techno', 'type': 'all'}) }}">Techno (All)</a></li>
+                </ul>
+            </div>
+        </div>
+
+        {% if searchResults is not null %}
+            <hr class="my-4">
+
+            {% if searchResults.results|length > 0 %}
+                <h3>Search results for "{{ searchQuery }}"</h3>
+                <p class="text-muted mb-3">
+                    {{ searchResults.results|length }} of {{ searchResults.pagination.items }} results
+                    (Page {{ searchResults.pagination.page }} of {{ searchResults.pagination.pages }})
+                </p>
+
+                <div class="row">
+                {% for result in searchResults.results %}
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card h-100">
+                            {% if result.thumb is defined and result.thumb %}
+                                <img src="{{ result.thumb }}" class="card-img-top" alt="{{ result.title }}" style="height: 200px; object-fit: cover;">
+                            {% endif %}
+
+                            <div class="card-body">
+                                <h6 class="card-title">{{ result.title }}</h6>
+
+                                {% if result.type is defined %}
+                                    <span class="badge bg-secondary mb-2">{{ result.type|upper }}</span>
+                                {% endif %}
+
+                                {% if result.year is defined %}
+                                    <p class="card-text"><small class="text-muted">Year: {{ result.year }}</small></p>
+                                {% endif %}
+
+                                {% if result.label is defined %}
+                                    <p class="card-text"><small class="text-muted">Label: {{ result.label|join(', ') }}</small></p>
+                                {% endif %}
+
+                                {% if result.genre is defined %}
+                                    <p class="card-text"><small class="text-muted">Genre: {{ result.genre|join(', ') }}</small></p>
+                                {% endif %}
+
+                                {% if result.style is defined %}
+                                    <p class="card-text"><small class="text-muted">Style: {{ result.style|join(', ') }}</small></p>
+                                {% endif %}
+                            </div>
+
+                            <div class="card-footer">
+                                {% if result.type == 'artist' %}
+                                    <a href="{{ path('artist_detail', {'id': result.id}) }}" class="btn btn-sm btn-primary">View Artist</a>
+                                {% elseif result.type == 'release' %}
+                                    <a href="{{ path('release_detail', {'id': result.id}) }}" class="btn btn-sm btn-primary">View Release</a>
+                                {% else %}
+                                    <a href="{{ result.resource_url }}" target="_blank" class="btn btn-sm btn-outline-primary">View on Discogs.com</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+
+                {% if searchResults.pagination.pages > 1 %}
+                    <nav aria-label="Search pagination">
+                        <ul class="pagination justify-content-center">
+                            {% if searchResults.pagination.page > 1 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ path('search', {'q': searchQuery, 'type': searchType, 'page': searchResults.pagination.page - 1}) }}">Previous</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">{{ searchResults.pagination.page }}</span>
+                            </li>
+
+                            {% if searchResults.pagination.page < searchResults.pagination.pages %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ path('search', {'q': searchQuery, 'type': searchType, 'page': searchResults.pagination.page + 1}) }}">Next</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">No Results Found</h4>
+                    <p>No results were found for the search "{{ searchQuery }}".</p>
+                    <hr>
+                    <p class="mb-0">Try different search terms or a different search type.</p>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock body %}

@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ artist.name }} - Discogs Bundle Demo{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('default_index') }}">Home</a></li>
+                <li class="breadcrumb-item active">{{ artist.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-md-4">
+                {% if artist.images is defined and artist.images|length > 0 %}
+                    <img src="{{ artist.images[0].uri }}" alt="{{ artist.name }}" class="img-fluid rounded">
+                {% endif %}
+
+                <h1>{{ artist.name }}</h1>
+
+                {% if artist.real_name is defined %}
+                    <p><strong>Real Name:</strong> {{ artist.real_name }}</p>
+                {% endif %}
+
+                {% if artist.profile is defined %}
+                    <div class="mt-3">
+                        <h5>Profile:</h5>
+                        <p>{{ artist.profile|nl2br }}</p>
+                    </div>
+                {% endif %}
+
+                {% if artist.urls is defined and artist.urls|length > 0 %}
+                    <div class="mt-3">
+                        <h5>Links:</h5>
+                        <ul class="list-unstyled">
+                        {% for url in artist.urls %}
+                            <li><a href="{{ url }}" target="_blank">{{ url }}</a></li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-8">
+                {% if artist.aliases is defined and artist.aliases|length > 0 %}
+                    <div class="mb-4">
+                        <h4>Aliases:</h4>
+                        <div class="row">
+                        {% for alias in artist.aliases %}
+                            <div class="col-md-6 mb-2">
+                                <a href="{{ path('artist_detail', {'id': alias.id}) }}" class="btn btn-outline-secondary btn-sm">
+                                    {{ alias.name }}
+                                </a>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if artist.members is defined and artist.members|length > 0 %}
+                    <div class="mb-4">
+                        <h4>Members:</h4>
+                        <div class="row">
+                        {% for member in artist.members %}
+                            <div class="col-md-6 mb-2">
+                                <a href="{{ path('artist_detail', {'id': member.id}) }}" class="btn btn-outline-primary btn-sm">
+                                    {{ member.name }}
+                                </a>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if releases is defined and releases.releases|length > 0 %}
+                    <div class="mb-4">
+                        <h4>Releases (first {{ releases.releases|length }}):</h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Title</th>
+                                        <th>Label</th>
+                                        <th>Format</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for release in releases.releases %}
+                                    <tr>
+                                        <td>{{ release.year ?? 'N/A' }}</td>
+                                        <td>{{ release.title }}</td>
+                                        <td>{{ release.label|join(', ') }}</td>
+                                        <td>{{ release.format|join(', ') }}</td>
+                                        <td>
+                                            <a href="{{ path('release_detail', {'id': release.id}) }}" class="btn btn-sm btn-primary">
+                                                Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {% if releases.pagination.pages > 1 %}
+                            <p class="text-muted">
+                                Page {{ releases.pagination.page }} of {{ releases.pagination.pages }}
+                                ({{ releases.pagination.items }} of {{ releases.pagination.items }} releases)
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock body %}

@@ -1,0 +1,177 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Collection - Discogs Bundle Demo{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('default_index') }}">Home</a></li>
+                <li class="breadcrumb-item active">Collection</li>
+            </ol>
+        </nav>
+
+        <h1>Your Discogs Collection</h1>
+        <p class="lead">Collection of <strong>{{ username }}</strong></p>
+
+        {% if folders is defined and folders.folders|length > 0 %}
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <h3>Collection Folders:</h3>
+                    <div class="row">
+                    {% for folder in folders.folders %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card{% if selectedFolder and folder.id == selectedFolder.id %} border-primary{% endif %}">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        {{ folder.name }}
+                                        {% if selectedFolder and folder.id == selectedFolder.id %}
+                                            <span class="badge bg-primary">Current</span>
+                                        {% endif %}
+                                    </h5>
+                                    <p class="card-text">
+                                        <strong>{{ folder.count }}</strong> entries
+                                    </p>
+                                    {% if selectedFolder and folder.id == selectedFolder.id %}
+                                        <span class="btn btn-primary btn-sm disabled">
+                                            Current Folder
+                                        </span>
+                                    {% else %}
+                                        <a href="{{ path('user_collection') }}?folder={{ folder.id }}" class="btn btn-primary btn-sm">
+                                            View Folder
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if collectionItems is defined and collectionItems.releases|length > 0 %}
+            {% if selectedFolder %}
+                <h3>Releases in "{{ selectedFolder.name }}" folder:</h3>
+            {% else %}
+                <h3>Releases in your collection:</h3>
+            {% endif %}
+            <p class="text-muted mb-3">
+                {{ collectionItems.releases|length }} of {{ collectionItems.pagination.items }} releases
+                (Page {{ collectionItems.pagination.page }} of {{ collectionItems.pagination.pages }})
+            </p>
+
+            <div class="row">
+            {% for item in collectionItems.releases %}
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100">
+                        {% if item.basic_information.thumb is defined and item.basic_information.thumb %}
+                            <img src="{{ item.basic_information.thumb }}" class="card-img-top" alt="{{ item.basic_information.title }}" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+
+                        <div class="card-body">
+                            <h6 class="card-title">{{ item.basic_information.title }}</h6>
+
+                            {% if item.basic_information.artists is defined %}
+                                <p class="card-text">
+                                    <strong>Artist:</strong>
+                                    {% for artist in item.basic_information.artists %}
+                                        <a href="{{ path('artist_detail', {'id': artist.id}) }}">{{ artist.name }}</a>
+                                        {% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+
+                            {% if item.basic_information.year is defined %}
+                                <p class="card-text"><small class="text-muted">Year: {{ item.basic_information.year }}</small></p>
+                            {% endif %}
+
+                            {% if item.basic_information.labels is defined %}
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        Label:
+                                        {% for label in item.basic_information.labels %}
+                                            {{ label.name }}
+                                            {% if label.catno is defined %} ({{ label.catno }}){% endif %}
+                                            {% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </small>
+                                </p>
+                            {% endif %}
+
+                            {% if item.basic_information.formats is defined %}
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        Format:
+                                        {% for format in item.basic_information.formats %}
+                                            {{ format.name }}
+                                            {% if format.qty is defined %} ({{ format.qty }}x){% endif %}
+                                            {% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </small>
+                                </p>
+                            {% endif %}
+
+                            {% if item.date_added is defined %}
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        Added: {{ item.date_added|date('m/d/Y H:i') }}
+                                    </small>
+                                </p>
+                            {% endif %}
+
+                            {% if item.rating is defined and item.rating > 0 %}
+                                <p class="card-text">
+                                    <small class="text-success">
+                                        Rating: {{ item.rating }}/5 ⭐
+                                    </small>
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-footer">
+                            <a href="{{ path('release_detail', {'id': item.basic_information.id}) }}" class="btn btn-sm btn-primary">
+                                View Details
+                            </a>
+                            {% if item.instance_id is defined %}
+                                <a href="https://www.discogs.com/release/{{ item.basic_information.id }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                    View on Discogs
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+
+            {% if collectionItems.pagination.pages > 1 %}
+                <nav aria-label="Collection pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if collectionItems.pagination.page > 1 %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ path('user_collection') }}{% if selectedFolder %}?folder={{ selectedFolder.id }}&page={{ collectionItems.pagination.page - 1 }}{% else %}?page={{ collectionItems.pagination.page - 1 }}{% endif %}">Previous</a>
+                            </li>
+                        {% endif %}
+
+                        <li class="page-item active">
+                            <span class="page-link">{{ collectionItems.pagination.page }}</span>
+                        </li>
+
+                        {% if collectionItems.pagination.page < collectionItems.pagination.pages %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ path('user_collection') }}{% if selectedFolder %}?folder={{ selectedFolder.id }}&page={{ collectionItems.pagination.page + 1 }}{% else %}?page={{ collectionItems.pagination.page + 1 }}{% endif %}">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading">No Collection Items Found</h4>
+                <p>Your Discogs collection appears to be empty or private.</p>
+                <hr>
+                <p class="mb-0">Visit <a href="https://www.discogs.com" target="_blank">Discogs.com</a> to manage your collection.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock body %}

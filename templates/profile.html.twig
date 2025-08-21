@@ -1,0 +1,171 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile - Discogs Bundle Demo{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('default_index') }}">Home</a></li>
+                <li class="breadcrumb-item active">Profile</li>
+            </ol>
+        </nav>
+
+        <h1>Your Discogs Profile</h1>
+
+        <div class="row">
+            <div class="col-md-4">
+                {% if profile.avatar_url is defined %}
+                    <img src="{{ profile.avatar_url }}" alt="{{ profile.username }}" class="img-fluid rounded-circle mb-3" style="max-width: 200px;">
+                {% endif %}
+
+                <h2>{{ profile.username }}</h2>
+
+                {% if profile.name is defined and profile.name %}
+                    <p><strong>Name:</strong> {{ profile.name }}</p>
+                {% endif %}
+
+                {% if profile.location is defined and profile.location %}
+                    <p><strong>Location:</strong> {{ profile.location }}</p>
+                {% endif %}
+
+                {% if profile.registered is defined %}
+                    <p><strong>Member since:</strong> {{ profile.registered|date('m/d/Y') }}</p>
+                {% endif %}
+
+                {% if profile.profile is defined and profile.profile %}
+                    <div class="mt-3">
+                        <h5>Profile Description:</h5>
+                        <p>{{ profile.profile|nl2br }}</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-8">
+                <h3>Statistics</h3>
+
+                <div class="row mb-4">
+                    {% if profile.num_collection is defined %}
+                        <div class="col-md-3 mb-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ profile.num_collection }}</h5>
+                                    <p class="card-text">Collection</p>
+                                    <a href="{{ path('user_collection') }}" class="btn btn-primary btn-sm">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if profile.num_wantlist is defined %}
+                        <div class="col-md-3 mb-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ profile.num_wantlist }}</h5>
+                                    <p class="card-text">Wantlist</p>
+                                    <a href="{{ path('user_wantlist') }}" class="btn btn-primary btn-sm">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if profile.num_for_sale is defined %}
+                        <div class="col-md-3 mb-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ profile.num_for_sale }}</h5>
+                                    <p class="card-text">For Sale</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if profile.num_lists is defined %}
+                        <div class="col-md-3 mb-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ profile.num_lists }}</h5>
+                                    <p class="card-text">Lists</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if profile.rating_avg is defined %}
+                    <div class="mb-4">
+                        <h4>Ratings</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Average Rating:</strong> {{ profile.rating_avg }}/5 ⭐</p>
+                                {% if profile.rating_count is defined %}
+                                    <p><strong>Number of Ratings:</strong> {{ profile.rating_count }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if profile.seller_rating is defined %}
+                    <div class="mb-4">
+                        <h4>Seller Rating</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Seller Rating:</strong> {{ profile.seller_rating }}%</p>
+                                {% if profile.seller_rating_count is defined %}
+                                    <p><strong>Number of Seller Ratings:</strong> {{ profile.seller_rating_count }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if profile.marketplace_stats is defined %}
+                    <div class="mb-4">
+                        <h4>Marketplace Statistics</h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <tbody>
+                                    {% for key, value in profile.marketplace_stats %}
+                                        <tr>
+                                            <td><strong>{{ key|replace({'_': ' '})|title }}:</strong></td>
+                                            <td>{{ value }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="mb-4">
+                    <h4>OAuth Identity Information</h4>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td><strong>Username:</strong></td>
+                                    <td>{{ identity.username }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Resource URL:</strong></td>
+                                    <td><a href="{{ identity.resource_url }}" target="_blank">{{ identity.resource_url }}</a></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Consumer Name:</strong></td>
+                                    <td>{{ identity.consumer_name }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="https://www.discogs.com/user/{{ profile.username }}" target="_blank" class="btn btn-outline-primary">
+                        View Profile on Discogs.com
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}
