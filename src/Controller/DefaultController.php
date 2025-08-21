@@ -18,7 +18,7 @@ class DefaultController extends AbstractController
         try {
             $identity = $discogs->getOAuthIdentity();
         } catch (Exception $e) {
-            return $this->redirectToRoute('hwi_oauth_connect');
+            return $this->redirectToRoute('hwi_oauth_service_redirect', ['service' => 'discogs']);
         }
 
         return $this->render('default.html.twig', ['identity' => $identity]);

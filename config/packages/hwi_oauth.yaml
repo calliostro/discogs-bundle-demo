@@ -1,8 +1,7 @@
 hwi_oauth:
-  firewall_names: [main]
-
-  resource_owners:
-    discogs:
-      type: discogs
-      client_id: '%env(CONSUMER_KEY)%'
-      client_secret: '%env(CONSUMER_SECRET)%'
+    # https://github.com/hwi/HWIOAuthBundle/blob/master/docs/2-configuring_resource_owners.md
+    resource_owners:
+        discogs:
+            type: discogs
+            client_id: '%env(CONSUMER_KEY)%'
+            client_secret: '%env(CONSUMER_SECRET)%'

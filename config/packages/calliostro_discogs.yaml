@@ -1,14 +1,14 @@
 calliostro_discogs:
 
-  user_agent: 'CalliostroDiscogsBundleDemo/3.0 +calliostro/discogs-bundle-demo'
+    user_agent: 'CalliostroDiscogsBundleDemo/3.0 +calliostro/discogs-bundle-demo'
 
-  consumer_key: '%env(CONSUMER_KEY)%'
-  consumer_secret: '%env(CONSUMER_SECRET)%'
+    consumer_key: '%env(CONSUMER_KEY)%'
+    consumer_secret: '%env(CONSUMER_SECRET)%'
 
-  throttle:
-    enabled: true
-    microseconds: 1000000
+    throttle:
+        enabled: true
+        microseconds: 1000000
 
-  oauth:
-    enabled: true
-    token_provider: calliostro_discogs.hwi_oauth_token_provider
+    oauth:
+        enabled: true
+        token_provider: calliostro_discogs.hwi_oauth_token_provider
