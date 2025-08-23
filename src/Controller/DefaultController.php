@@ -16,14 +16,14 @@ class DefaultController extends AbstractController
     {
         try {
             $identity = $discogs->getOAuthIdentity();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return $this->redirectToRoute('hwi_oauth_service_redirect', ['service' => 'discogs']);
         }
 
         return $this->render('default.html.twig', ['identity' => $identity]);
     }
 
-    #[Route('/artist/{id}', name: 'artist_detail', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('/artist/{id}', name: 'artist_detail', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function artistDetail(DiscogsClient $discogs, int $id): Response
     {
         try {
@@ -40,7 +40,7 @@ class DefaultController extends AbstractController
         }
     }
 
-    #[Route('/release/{id}', name: 'release_detail', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('/release/{id}', name: 'release_detail', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function releaseDetail(DiscogsClient $discogs, int $id): Response
     {
         try {
@@ -100,7 +100,7 @@ class DefaultController extends AbstractController
             $collectionItems = null;
 
             if (!empty($folders['folders'])) {
-                // If folder_id is specified, find that folder, otherwise use first folder
+                // If folder_id is specified, find that folder, otherwise use the first folder
                 if ($folderId) {
                     foreach ($folders['folders'] as $folder) {
                         if ($folder['id'] == $folderId) {
@@ -110,7 +110,7 @@ class DefaultController extends AbstractController
                     }
                 }
 
-                // If no specific folder found or no folder_id specified, use first folder
+                // If no specific folder found or no folder_id specified, use the first folder
                 if (!$selectedFolder) {
                     $selectedFolder = $folders['folders'][0];
                 }
@@ -199,7 +199,7 @@ class DefaultController extends AbstractController
         }
     }
 
-    #[Route('/label/{id}', name: 'label_detail', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('/label/{id}', name: 'label_detail', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function labelDetail(DiscogsClient $discogs, int $id): Response
     {
         try {
@@ -216,7 +216,7 @@ class DefaultController extends AbstractController
         }
     }
 
-    #[Route('/master/{id}', name: 'master_detail', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('/master/{id}', name: 'master_detail', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function masterDetail(DiscogsClient $discogs, int $id): Response
     {
         try {
@@ -256,7 +256,7 @@ class DefaultController extends AbstractController
         }
     }
 
-    #[Route('/list/{id}', name: 'list_detail', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('/list/{id}', name: 'list_detail', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function listDetail(DiscogsClient $discogs, int $id): Response
     {
         try {

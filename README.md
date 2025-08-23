@@ -34,7 +34,7 @@ This demo showcases the full capabilities of the Discogs API through a modern we
 
 Make sure Composer is installed globally, as explained in the [installation chapter](https://getcomposer.org/doc/00-intro.md) of the Composer documentation.
 
-Open a command console, enter your desired parent directory for the demo and execute:
+Open a command console, enter your desired parent directory for the demo, and execute:
 
 ```console
 git clone https://github.com/calliostro/discogs-bundle-demo
@@ -54,28 +54,28 @@ The demo provides the following routes to showcase different Discogs API feature
 
 ### Main Routes
 
-| Route | Method | Description |
-|-------|--------|-------------|
-| `/` | GET | Home page with user authentication info and navigation |
-| `/search` | GET/POST | Search the Discogs database for artists, releases, labels, etc. |
-| `/artist/{id}` | GET | Display detailed artist information and releases |
-| `/release/{id}` | GET | Display detailed release information including tracklist |
-| `/label/{id}` | GET | Display detailed label information and releases |
-| `/master/{id}` | GET | Display master release information and versions |
-| `/collection` | GET | View the authenticated user's Discogs collection |
-| `/wantlist` | GET | View the authenticated user's Discogs wantlist |
-| `/profile` | GET | View the authenticated user's complete Discogs profile |
-| `/lists` | GET | View the authenticated user's custom lists |
-| `/list/{id}` | GET | View items in a specific user list |
-| `/marketplace` | GET | Browse marketplace listings |
-| `/orders` | GET | View and manage marketplace orders |
-| `/inventory` | GET | View user's marketplace inventory |
-| `/random` | GET | Discover random releases from popular artists |
+| Route           | Method   | Description                                                     |
+|-----------------|----------|-----------------------------------------------------------------|
+| `/`             | GET      | Home page with user authentication info and navigation          |
+| `/search`       | GET/POST | Search the Discogs database for artists, releases, labels, etc. |
+| `/artist/{id}`  | GET      | Display detailed artist information and releases                |
+| `/release/{id}` | GET      | Display detailed release information including tracklist        |
+| `/label/{id}`   | GET      | Display detailed label information and releases                 |
+| `/master/{id}`  | GET      | Display master release information and versions                 |
+| `/collection`   | GET      | View the authenticated user's Discogs collection                |
+| `/wantlist`     | GET      | View the authenticated user's Discogs wantlist                  |
+| `/profile`      | GET      | View the authenticated user's complete Discogs profile          |
+| `/lists`        | GET      | View the authenticated user's custom lists                      |
+| `/list/{id}`    | GET      | View items in a specific user list                              |
+| `/marketplace`  | GET      | Browse marketplace listings                                     |
+| `/orders`       | GET      | View and manage marketplace orders                              |
+| `/inventory`    | GET      | View user's marketplace inventory                               |
+| `/random`       | GET      | Discover random releases from popular artists                   |
 
 ### Route Examples
 
 🎵 **Artist Details**: `/artist/8760` (Pink Floyd)  
-💿 **Release Details**: `/release/1` (First release in Discogs database)  
+💿 **Release Details**: `/release/1` (First release in the Discogs database)  
 🏷️ **Label Details**: `/label/1` (Blue Note Records)  
 📀 **Master Release**: `/master/5427` (Dark Side of the Moon)
 
@@ -154,7 +154,7 @@ Open your web browser and visit the URL shown in the console output.
 🚀 **PHP 8 Attributes** for routing (instead of annotations)  
 🔒 **Strong typing** with proper return types  
 ⚡ **Exception handling** with user-friendly error messages  
-🏗️ **Modern PHP 8.1-8.5** compatibility
+🏗️ **Modern PHP 8.1–8.5** compatibility
 
 ### UI/UX Features
 🎨 **Bootstrap 5** for responsive design  
@@ -165,7 +165,7 @@ Open your web browser and visit the URL shown in the console output.
 
 ### Framework Support
 🎯 **Symfony 6.4 (LTS)** - Long-term support  
-⚡ **Symfony 7.x** - Latest stable features  
+⚡ **Symfony 7.x** — Latest stable features  
 🧪 **Symfony 8.0 (beta)** - Cutting-edge features
 
 ### API Integration
