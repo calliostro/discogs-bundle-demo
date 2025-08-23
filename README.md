@@ -62,31 +62,31 @@ php -S 127.0.0.1:8000 -t public
 
 Open your web browser and visit the URL shown in the console output.
 
-## Available Routes
+## 📋 Available Routes
 
 The demo provides the following routes to showcase different Discogs API features:
 
-### Main Routes
+### 🛣️ Main Routes
 
-| Route           | Method   | Description                                                     |
-|-----------------|----------|-----------------------------------------------------------------|
-| `/`             | GET      | Home page with user authentication info and navigation          |
-| `/search`       | GET/POST | Search the Discogs database for artists, releases, labels, etc. |
-| `/artist/{id}`  | GET      | Display detailed artist information and releases                |
-| `/release/{id}` | GET      | Display detailed release information including tracklist        |
-| `/label/{id}`   | GET      | Display detailed label information and releases                 |
-| `/master/{id}`  | GET      | Display master release information and versions                 |
-| `/collection`   | GET      | View the authenticated user's Discogs collection                |
-| `/wantlist`     | GET      | View the authenticated user's Discogs wantlist                  |
-| `/profile`      | GET      | View the authenticated user's complete Discogs profile          |
-| `/lists`        | GET      | View the authenticated user's custom lists                      |
-| `/list/{id}`    | GET      | View items in a specific user list                              |
-| `/marketplace`  | GET      | Browse marketplace listings                                     |
-| `/orders`       | GET      | View and manage marketplace orders                              |
-| `/inventory`    | GET      | View user's marketplace inventory                               |
-| `/random`       | GET      | Discover random releases from popular artists                   |
+| Route           | Method   | Description                                                        |
+|-----------------|----------|--------------------------------------------------------------------|
+| `/`             | GET      | 🏠 Home page with user authentication info and navigation          |
+| `/search`       | GET/POST | 🔍 Search the Discogs database for artists, releases, labels, etc. |
+| `/artist/{id}`  | GET      | 🎵 Display detailed artist information and releases                |
+| `/release/{id}` | GET      | 💿 Display detailed release information including tracklist        |
+| `/label/{id}`   | GET      | 🏷️ Display detailed label information and releases                |
+| `/master/{id}`  | GET      | 🎯 Display master release information and versions                 |
+| `/collection`   | GET      | 📀 View the authenticated user's Discogs collection                |
+| `/wantlist`     | GET      | 💝 View the authenticated user's Discogs wantlist                  |
+| `/profile`      | GET      | 👤 View the authenticated user's complete Discogs profile          |
+| `/lists`        | GET      | 📋 View the authenticated user's custom lists                      |
+| `/list/{id}`    | GET      | 📝 View items in a specific user list                               |
+| `/marketplace`  | GET      | 🛒 Browse marketplace listings                                     |
+| `/orders`       | GET      | 📦 View and manage marketplace orders                              |
+| `/inventory`    | GET      | 📦 View user's marketplace inventory                               |
+| `/random`       | GET      | 🎲 Discover random releases from popular artists                   |
 
-### Route Examples
+### 🎯 Route Examples
 
 🎵 **Artist Details**: `/artist/8760` (Pink Floyd)  
 💿 **Release Details**: `/release/1` (First release in the Discogs database)  
@@ -146,9 +146,9 @@ Each route demonstrates different aspects of the Discogs API:
 💰 `getOrder()` - Detailed order information  
 📊 Marketplace statistics and insights
 
-## Code Examples
+## 🔧 Code Examples
 
-### Basic Artist Information
+### 🎵 Basic Artist Information
 ```php
 #[Route('/artist/{id}', name: 'artist_detail', methods: ['GET'])]
 public function artistDetail(DiscogsClient $discogs, int $id): Response
@@ -163,7 +163,7 @@ public function artistDetail(DiscogsClient $discogs, int $id): Response
 }
 ```
 
-### Label Information
+### 🏷️ Label Information
 ```php
 #[Route('/label/{id}', name: 'label_detail', methods: ['GET'])]
 public function labelDetail(DiscogsClient $discogs, int $id): Response
@@ -178,7 +178,7 @@ public function labelDetail(DiscogsClient $discogs, int $id): Response
 }
 ```
 
-### User Lists Management
+### 📋 User Lists Management
 ```php
 #[Route('/lists', name: 'user_lists', methods: ['GET'])]
 public function userLists(DiscogsClient $discogs): Response
@@ -196,7 +196,7 @@ public function userLists(DiscogsClient $discogs): Response
 }
 ```
 
-### Marketplace Integration
+### 🛒 Marketplace Integration
 ```php
 #[Route('/marketplace', name: 'marketplace', methods: ['GET'])]
 public function marketplace(DiscogsClient $discogs, Request $request): Response
