@@ -10,12 +10,6 @@ in combination with [hwi/HWIOAuthBundle](https://github.com/hwi/HWIOAuthBundle).
 
 You need PHP 8.1–8.5 and Symfony 6.4 (LTS), 7.x, or 8.0 (beta).
 
-The lock files (`composer.lock`, `symfony.lock`) are not included in this repository to ensure maximum flexibility for different PHP and Symfony versions. After cloning, please run `composer install` or `composer update` to install the appropriate package versions and Symfony recipes for your environment.
-
-If you want to suppress the interactive recipe prompt ("Do you want to execute this recipe?"), use Composer with the `--no-interaction` flag:
-
-This demo showcases the full capabilities of the Discogs API through a modern web interface:
-
 ## Features
 
 🔍 **Search** – Search the entire Discogs database  
@@ -42,11 +36,31 @@ cd discogs-bundle-demo
 composer install --no-interaction
 ```
 
+The lock files (`composer.lock`, `symfony.lock`) are not included in this repository to ensure maximum flexibility for different PHP and Symfony versions. After cloning, please run `composer install` or `composer update` to install the appropriate package versions and Symfony recipes for your environment.
+
+If you want to suppress the interactive recipe prompt ("Do you want to execute this recipe?"), use Composer with the `--no-interaction` flag.
+
 ## Configuration
 
 First, you must register the application at https://www.discogs.com/applications/edit to get the `consumer_key` and
 `consumer_secret`. You can set the values as environment variables. Then they will be used by both bundles. See also
 [calliostro/discogs-bundle](https://github.com/calliostro/discogs-bundle#configuration).
+
+## Usage
+
+Start the local web server of Symfony in the discogs-bundle-demo directory:
+
+```console
+symfony serve
+```
+
+Or use PHP's built-in server:
+
+```console
+php -S 127.0.0.1:8000 -t public
+```
+
+Open your web browser and visit the URL shown in the console output.
 
 ## Available Routes
 
@@ -84,104 +98,53 @@ The demo provides the following routes to showcase different Discogs API feature
 - `/search?q=Abbey Road&type=release`
 - `/search?q=Blue Note&type=label`
 
-### API Features Demonstrated
+## API Features Demonstrated
 
 Each route demonstrates different aspects of the Discogs API:
 
-#### Search (`/search`)
+### Search (`/search`)
 📊 Database search with filtering by type  
 📄 Pagination support  
 🔍 Multiple search types (artist, release, label, master)
 
-#### Artist Details (`/artist/{id}`)
+### Artist Details (`/artist/{id}`)
 🎤 `getArtist()` - Basic artist information  
 💽 `getArtistReleases()` - Artist's discography  
 🖼️ Artist images, aliases, and band members
 
-#### Release Details (`/release/{id}`)
+### Release Details (`/release/{id}`)
 📀 `getRelease()` - Complete release information  
 🎵 Tracklist with track details  
 👥 Credits and contributors  
 🏷️ Label information and identifiers
 
-#### Label Details (`/label/{id}`)
+### Label Details (`/label/{id}`)
 🏢 `getLabel()` - Complete label information  
 📀 `getLabelReleases()` - Label's catalog  
 📈 Label statistics and history
 
-#### Master Release (`/master/{id}`)
+### Master Release (`/master/{id}`)
 🎯 `getMaster()` - Master release information  
 📑 `getMasterVersions()` - All versions and pressings  
 💿 Format variations and differences
 
-#### User Features (`/collection`, `/wantlist`, `/profile`)
+### User Features (`/collection`, `/wantlist`, `/profile`)
 🔐 `getOAuthIdentity()` - OAuth user authentication  
 📁 `getCollectionFolders()` - Collection organization  
 📀 `getCollectionItemsByFolder()` - Collection contents  
 💝 `getWantlist()` - User's wanted items  
 👤 `getProfile()` - Complete user profile with statistics
 
-#### List Management (`/lists`, `/list/{id}`)
+### List Management (`/lists`, `/list/{id}`)
 📋 `getUserLists()` - User's custom lists  
 📝 `getLists()` - List items and details  
 🗂️ List organization and management
 
-#### Marketplace (`/marketplace`, `/orders`, `/inventory`)
+### Marketplace (`/marketplace`, `/orders`, `/inventory`)
 🛒 `getInventory()` - Marketplace listings  
 📦 `getOrders()` - Order management  
 💰 `getOrder()` - Detailed order information  
 📊 Marketplace statistics and insights
-
-## Usage
-
-Start the local web server of Symfony in the discogs-bundle-demo directory:
-
-```console
-symfony serve
-```
-
-Or use PHP's built-in server:
-
-```console
-php -S 127.0.0.1:8000 -t public
-```
-
-Open your web browser and visit the URL shown in the console output.
-
-## Technical Implementation
-
-### Modern PHP Features
-🚀 **PHP 8 Attributes** for routing (instead of annotations)  
-🔒 **Strong typing** with proper return types  
-⚡ **Exception handling** with user-friendly error messages  
-🏗️ **Modern PHP 8.1–8.5** compatibility
-
-### UI/UX Features
-🎨 **Bootstrap 5** for responsive design  
-🃏 **Interactive cards** with hover effects  
-🧭 **Breadcrumb navigation** for better user experience  
-💬 **Flash messages** for user feedback  
-📄 **Pagination** for large result sets
-
-### Framework Support
-🎯 **Symfony 6.4 (LTS)** - Long-term support  
-⚡ **Symfony 7.x** — Latest stable features  
-🧪 **Symfony 8.0 (beta)** - Cutting-edge features
-
-### API Integration
-🔐 **OAuth authentication** flow  
-⏱️ **Rate limiting** awareness  
-🛡️ **Error handling** for API failures  
-🚀 **Caching-friendly** implementation
-
-### Production Guidelines
-⚠️ **Important for Production Use:**
-- Implement proper caching to reduce API calls
-- Respect Discogs' rate limits (60 requests per minute for authenticated requests)
-- Cache search results and static data (artists, releases, labels)
-- Use appropriate cache TTL values (e.g., 24h for releases, 1h for dynamic data)
-- Consider implementing request queuing for high-traffic applications
-- Monitor your API usage through Discogs developer dashboard
 
 ## Code Examples
 
@@ -256,6 +219,41 @@ public function marketplace(DiscogsClient $discogs, Request $request): Response
     ]);
 }
 ```
+
+## Technical Implementation
+
+### Modern PHP Features
+🚀 **PHP 8 Attributes** for routing (instead of annotations)  
+🔒 **Strong typing** with proper return types  
+⚡ **Exception handling** with user-friendly error messages  
+🏗️ **Modern PHP 8.1–8.5** compatibility
+
+### UI/UX Features
+🎨 **Bootstrap 5** for responsive design  
+🃏 **Interactive cards** with hover effects  
+🧭 **Breadcrumb navigation** for better user experience  
+💬 **Flash messages** for user feedback  
+📄 **Pagination** for large result sets
+
+### Framework Support
+🎯 **Symfony 6.4 (LTS)** - Long-term support  
+⚡ **Symfony 7.x** — Latest stable features  
+🧪 **Symfony 8.0 (beta)** - Cutting-edge features
+
+### API Integration
+🔐 **OAuth authentication** flow  
+⏱️ **Rate limiting** awareness  
+🛡️ **Error handling** for API failures  
+🚀 **Caching-friendly** implementation
+
+### Production Guidelines
+⚠️ **Important for Production Use:**
+- Implement proper caching to reduce API calls
+- Respect Discogs' rate limits (60 requests per minute for authenticated requests)
+- Cache search results and static data (artists, releases, labels)
+- Use appropriate cache TTL values (e.g., 24h for releases, 1h for dynamic data)
+- Consider implementing request queuing for high-traffic applications
+- Monitor your API usage through Discogs developer dashboard
 
 ## Documentation
 
