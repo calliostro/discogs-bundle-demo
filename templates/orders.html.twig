@@ -1,0 +1,184 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Orders{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('default_index') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">My Orders</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-5">📦 My Orders</h1>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <form method="get" action="{{ path('user_orders') }}" class="row g-3">
+                <div class="col-md-3">
+                    <select name="status" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="New Order" {{ status == 'New Order' ? 'selected' : '' }}>New Order</option>
+                        <option value="Buyer Contacted" {{ status == 'Buyer Contacted' ? 'selected' : '' }}>Buyer Contacted</option>
+                        <option value="Invoice Sent" {{ status == 'Invoice Sent' ? 'selected' : '' }}>Invoice Sent</option>
+                        <option value="Payment Pending" {{ status == 'Payment Pending' ? 'selected' : '' }}>Payment Pending</option>
+                        <option value="Payment Received" {{ status == 'Payment Received' ? 'selected' : '' }}>Payment Received</option>
+                        <option value="Shipped" {{ status == 'Shipped' ? 'selected' : '' }}>Shipped</option>
+                        <option value="Cancelled" {{ status == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="sort" class="form-select">
+                        <option value="created" {{ sort == 'created' ? 'selected' : '' }}>Date Created</option>
+                        <option value="last_activity" {{ sort == 'last_activity' ? 'selected' : '' }}>Last Activity</option>
+                        <option value="status" {{ sort == 'status' ? 'selected' : '' }}>Status</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="sort_order" class="form-select">
+                        <option value="desc" {{ sortOrder == 'desc' ? 'selected' : '' }}>Newest First</option>
+                        <option value="asc" {{ sortOrder == 'asc' ? 'selected' : '' }}>Oldest First</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if orders is defined and orders.orders|length > 0 %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i>
+            Found {{ orders.pagination.items ?? orders.orders|length }} orders
+        </div>
+
+        <div class="row">
+            {% for order in orders.orders %}
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">
+                                📦 Order #{{ order.id }}
+                            </h6>
+                            {% if order.status is defined %}
+                                <span class="badge bg-{{ order.status == 'Shipped' ? 'success' : (order.status == 'Cancelled' ? 'danger' : 'primary') }}">
+                                    {{ order.status }}
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="card-body">
+                            {% if order.seller is defined %}
+                                <p class="card-text">
+                                    <strong>🏪 Seller:</strong> {{ order.seller.username }}
+                                    {% if order.seller.stats is defined and order.seller.stats.rating %}
+                                        <span class="text-warning">
+                                            ⭐ {{ order.seller.stats.rating }}%
+                                        </span>
+                                    {% endif %}
+                                </p>
+                            {% endif %}
+                            
+                            {% if order.buyer is defined %}
+                                <p class="card-text">
+                                    <strong>🛒 Buyer:</strong> {{ order.buyer.username }}
+                                </p>
+                            {% endif %}
+                            
+                            {% if order.created is defined %}
+                                <p class="card-text text-muted small">
+                                    📅 Created: {{ order.created|date('Y-m-d H:i') }}
+                                </p>
+                            {% endif %}
+                            
+                            {% if order.last_activity is defined %}
+                                <p class="card-text text-muted small">
+                                    🔄 Last Activity: {{ order.last_activity|date('Y-m-d H:i') }}
+                                </p>
+                            {% endif %}
+                            
+                            {% if order.total is defined %}
+                                <div class="card-text">
+                                    <strong class="text-success fs-5">
+                                        💰 Total: {{ order.total.currency }}{{ order.total.value }}
+                                    </strong>
+                                </div>
+                            {% endif %}
+                            
+                            {% if order.shipping is defined %}
+                                <p class="card-text text-muted small">
+                                    🚚 Shipping: {{ order.shipping.currency }}{{ order.shipping.value }}
+                                </p>
+                            {% endif %}
+                            
+                            {% if order.items is defined and order.items|length > 0 %}
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        📀 {{ order.items|length }} item{{ order.items|length != 1 ? 's' : '' }}
+                                    </small>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="card-footer">
+                            <a href="{{ path('order_detail', {'id': order.id}) }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-eye"></i> View Details
+                            </a>
+                            
+                            {% if order.uri is defined %}
+                                <a href="https://www.discogs.com{{ order.uri }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-box-arrow-up-right"></i> View on Discogs
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if orders.pagination is defined and orders.pagination.pages > 1 %}
+            <nav aria-label="Orders pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if orders.pagination.page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('user_orders', {'status': status, 'sort': sort, 'sort_order': sortOrder, 'page': orders.pagination.page - 1}) }}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for page in 1..orders.pagination.pages %}
+                        {% if page == orders.pagination.page %}
+                            <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ path('user_orders', {'status': status, 'sort': sort, 'sort_order': sortOrder, 'page': page}) }}">{{ page }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if orders.pagination.page < orders.pagination.pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('user_orders', {'status': status, 'sort': sort, 'sort_order': sortOrder, 'page': orders.pagination.page + 1}) }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i>
+            <strong>No orders found.</strong> {% if status %}No orders with status "{{ status }}".{% else %}You don't have any orders yet.{% endif %}
+        </div>
+        
+        <div class="text-center py-3">
+            <p class="text-muted">Visit the marketplace to start buying or selling records.</p>
+            <a href="{{ path('marketplace') }}" class="btn btn-primary">
+                <i class="bi bi-shop"></i> Browse Marketplace
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

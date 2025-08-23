@@ -198,4 +198,177 @@ class DefaultController extends AbstractController
             return $this->redirectToRoute('default_index');
         }
     }
+
+    #[Route('/label/{id}', name: 'label_detail', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function labelDetail(DiscogsClient $discogs, int $id): Response
+    {
+        try {
+            $label = $discogs->getLabel(['id' => $id]);
+            $labelReleases = $discogs->getLabelReleases(['id' => $id, 'per_page' => 10]);
+
+            return $this->render('label_detail.html.twig', [
+                'label' => $label,
+                'releases' => $labelReleases
+            ]);
+        } catch (Exception $e) {
+            $this->addFlash('error', 'Label could not be loaded: ' . $e->getMessage());
+            return $this->redirectToRoute('default_index');
+        }
+    }
+
+    #[Route('/master/{id}', name: 'master_detail', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function masterDetail(DiscogsClient $discogs, int $id): Response
+    {
+        try {
+            $master = $discogs->getMaster(['id' => $id]);
+            $masterVersions = $discogs->getMasterVersions(['id' => $id, 'per_page' => 10]);
+
+            return $this->render('master_detail.html.twig', [
+                'master' => $master,
+                'versions' => $masterVersions
+            ]);
+        } catch (Exception $e) {
+            $this->addFlash('error', 'Master release could not be loaded: ' . $e->getMessage());
+            return $this->redirectToRoute('default_index');
+        }
+    }
+
+    #[Route('/lists', name: 'user_lists', methods: ['GET'])]
+    public function userLists(DiscogsClient $discogs, Request $request): Response
+    {
+        try {
+            $identity = $discogs->getOAuthIdentity();
+            $page = max(1, (int) $request->query->get('page', 1));
+
+            $userLists = $discogs->getUserLists([
+                'username' => $identity['username'],
+                'page' => $page,
+                'per_page' => 50
+            ]);
+
+            return $this->render('user_lists.html.twig', [
+                'lists' => $userLists,
+                'username' => $identity['username']
+            ]);
+        } catch (Exception $e) {
+            $this->addFlash('error', 'User lists could not be loaded: ' . $e->getMessage());
+            return $this->redirectToRoute('default_index');
+        }
+    }
+
+    #[Route('/list/{id}', name: 'list_detail', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function listDetail(DiscogsClient $discogs, int $id): Response
+    {
+        try {
+            $listItems = $discogs->getLists(['list_id' => $id]);
+
+            return $this->render('list_detail.html.twig', [
+                'listItems' => $listItems,
+                'listId' => $id
+            ]);
+        } catch (Exception $e) {
+            $this->addFlash('error', 'List could not be loaded: ' . $e->getMessage());
+            return $this->redirectToRoute('default_index');
+        }
+    }
+
+    #[Route('/marketplace', name: 'marketplace', methods: ['GET'])]
+    public function marketplace(DiscogsClient $discogs, Request $request): Response
+    {
+        $searchQuery = $request->query->get('q', '');
+        $listings = null;
+
+        if (!empty($searchQuery)) {
+            try {
+                $searchResults = $discogs->search([
+                    'q' => $searchQuery,
+                    'type' => 'release',
+                    'per_page' => 20
+                ]);
+                $listings = $searchResults;
+            } catch (Exception $e) {
+                $this->addFlash('error', 'Marketplace search failed: ' . $e->getMessage());
+            }
+        }
+
+        return $this->render('marketplace.html.twig', [
+            'listings' => $listings,
+            'searchQuery' => $searchQuery
+        ]);
+    }
+
+    #[Route('/inventory', name: 'user_inventory', methods: ['GET'])]
+    public function userInventory(DiscogsClient $discogs, Request $request): Response
+    {
+        try {
+            $identity = $discogs->getOAuthIdentity();
+            $page = max(1, (int) $request->query->get('page', 1));
+            $status = $request->query->get('status', 'For Sale');
+
+            $inventory = $discogs->getInventory([
+                'username' => $identity['username'],
+                'status' => $status,
+                'page' => $page,
+                'per_page' => 20
+            ]);
+
+            return $this->render('inventory.html.twig', [
+                'inventory' => $inventory,
+                'username' => $identity['username'],
+                'status' => $status
+            ]);
+        } catch (Exception $e) {
+            $this->addFlash('error', 'Inventory could not be loaded: ' . $e->getMessage());
+            return $this->redirectToRoute('default_index');
+        }
+    }
+
+    #[Route('/orders', name: 'user_orders', methods: ['GET'])]
+    public function userOrders(DiscogsClient $discogs, Request $request): Response
+    {
+        try {
+            $page = max(1, (int) $request->query->get('page', 1));
+            $status = $request->query->get('status', '');
+            $sort = $request->query->get('sort', 'created');
+            $sortOrder = $request->query->get('sort_order', 'desc');
+
+            $orderParams = [
+                'page' => $page,
+                'per_page' => 20,
+                'sort' => $sort,
+                'sort_order' => $sortOrder
+            ];
+
+            if (!empty($status)) {
+                $orderParams['status'] = $status;
+            }
+
+            $orders = $discogs->getOrders($orderParams);
+
+            return $this->render('orders.html.twig', [
+                'orders' => $orders,
+                'status' => $status,
+                'sort' => $sort,
+                'sortOrder' => $sortOrder
+            ]);
+        } catch (Exception $e) {
+            $this->addFlash('error', 'Orders could not be loaded: ' . $e->getMessage());
+            return $this->redirectToRoute('default_index');
+        }
+    }
+
+    #[Route('/order/{id}', name: 'order_detail', methods: ['GET'])]
+    public function orderDetail(DiscogsClient $discogs, string $id): Response
+    {
+        try {
+            $order = $discogs->getOrder(['order_id' => $id]);
+
+            return $this->render('order_detail.html.twig', [
+                'order' => $order
+            ]);
+        } catch (Exception $e) {
+            $this->addFlash('error', 'Order could not be loaded: ' . $e->getMessage());
+            return $this->redirectToRoute('user_orders');
+        }
+    }
 }

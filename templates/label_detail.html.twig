@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ label.name }} - Label Details{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('default_index') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ label.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-4">
+            {% if label.images is defined and label.images|length > 0 %}
+                <img src="{{ label.images[0].uri }}" class="img-fluid rounded shadow" alt="{{ label.name }}">
+            {% else %}
+                <div class="bg-light p-5 text-center rounded shadow">
+                    <i class="bi bi-disc fs-1 text-muted"></i>
+                    <p class="text-muted mt-2">No image available</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-8">
+            <h1 class="display-5">🏷️ {{ label.name }}</h1>
+            
+            {% if label.profile is defined and label.profile %}
+                <div class="mt-3">
+                    <h5>📝 Profile</h5>
+                    <p class="text-muted">{{ label.profile|nl2br }}</p>
+                </div>
+            {% endif %}
+
+            {% if label.contact_info is defined and label.contact_info %}
+                <div class="mt-3">
+                    <h5>📞 Contact Information</h5>
+                    <p class="text-muted">{{ label.contact_info|nl2br }}</p>
+                </div>
+            {% endif %}
+
+            <div class="mt-3">
+                <h5>📊 Label Statistics</h5>
+                <div class="row">
+                    {% if label.releases_url is defined %}
+                        <div class="col-sm-6">
+                            <span class="badge bg-primary">🎵 Has Releases</span>
+                        </div>
+                    {% endif %}
+                    {% if label.parent_label is defined %}
+                        <div class="col-sm-6">
+                            <span class="badge bg-info">🏢 Parent Label: {{ label.parent_label.name }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if label.urls is defined and label.urls|length > 0 %}
+                <div class="mt-3">
+                    <h5>🔗 Links</h5>
+                    {% for url in label.urls %}
+                        <a href="{{ url }}" target="_blank" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                            <i class="bi bi-link-45deg"></i> Visit Website
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if label.sublabels is defined and label.sublabels|length > 0 %}
+                <div class="mt-3">
+                    <h5>🏪 Sub-labels</h5>
+                    <div class="row">
+                        {% for sublabel in label.sublabels %}
+                            <div class="col-md-6 mb-2">
+                                <a href="{{ path('label_detail', {'id': sublabel.id}) }}" class="btn btn-outline-secondary btn-sm">
+                                    {{ sublabel.name }}
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if releases is defined and releases.releases|length > 0 %}
+        <div class="mt-5">
+            <h3>💿 Recent Releases</h3>
+            <div class="row">
+                {% for release in releases.releases %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            {% if release.thumb is defined and release.thumb %}
+                                <img src="{{ release.thumb }}" class="card-img-top" alt="{{ release.title }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="bi bi-disc fs-1 text-muted"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title">{{ release.title }}</h6>
+                                <p class="card-text text-muted small">{{ release.year ?? 'Unknown Year' }}</p>
+                                <p class="card-text text-muted small">{{ release.format|join(', ') ?? 'Unknown Format' }}</p>
+                                <div class="mt-auto">
+                                    <a href="{{ path('release_detail', {'id': release.id}) }}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if releases.pagination is defined and releases.pagination.pages > 1 %}
+                <nav aria-label="Label releases pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if releases.pagination.page > 1 %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ path('label_detail', {'id': label.id, 'page': releases.pagination.page - 1}) }}">Previous</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for page in 1..releases.pagination.pages %}
+                            {% if page == releases.pagination.page %}
+                                <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ path('label_detail', {'id': label.id, 'page': page}) }}">{{ page }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if releases.pagination.page < releases.pagination.pages %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ path('label_detail', {'id': label.id, 'page': releases.pagination.page + 1}) }}">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

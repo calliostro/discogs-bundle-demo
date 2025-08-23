@@ -1,58 +1,155 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}calliostro/discogs-bundle-demo{% endblock %}
+{% block title %}Discogs Bundle Demo{% endblock %}
 
 {% block body %}
-    <h1>calliostro/discogs-bundle-demo</h1>
-    <p>This page shows who you're authenticated as, and it also doubles as a good sanity check to ensure that you're using OAuth correctly.</p>
+    <div class="hero-section text-center py-5 mb-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px;">
+        <h1 class="display-4 fw-bold">🎵 Discogs Bundle Demo</h1>
+        <p class="lead">Explore the complete Discogs API through this interactive demo</p>
+        <p class="mb-0">Authenticated as <span class="badge bg-light text-dark">{{ identity.username }}</span></p>
+    </div>
 
     <div class="row">
-        <div class="col-md-6">
-            <h3>User Information</h3>
-            <table class="table table-striped">
-                <tbody>
-                <tr><td>Username:</td><td>{{ identity.username }}</td></tr>
-                <tr><td>Resource URL:</td><td><a href="{{ identity.resource_url }}" target="_blank">{{ identity.resource_url }}</a></td></tr>
-                <tr><td>Consumer Name:</td><td>{{ identity.consumer_name }}</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="col-md-6">
-            <h3>Discogs API Demo Features</h3>
-            <div class="list-group">
-                <a href="{{ path('search') }}" class="list-group-item list-group-item-action">
-                    <h5 class="mb-1">🔍 Search</h5>
-                    <p class="mb-1">Search the Discogs database for artists, releases, labels and more</p>
-                </a>
-
-                <a href="{{ path('user_collection') }}" class="list-group-item list-group-item-action">
-                    <h5 class="mb-1">📀 My Collection</h5>
-                    <p class="mb-1">View your Discogs collection</p>
-                </a>
-
-                <a href="{{ path('user_wantlist') }}" class="list-group-item list-group-item-action">
-                    <h5 class="mb-1">💝 My Wantlist</h5>
-                    <p class="mb-1">View your Discogs wantlist</p>
-                </a>
-
-                <a href="{{ path('user_profile') }}" class="list-group-item list-group-item-action">
-                    <h5 class="mb-1">👤 My Profile</h5>
-                    <p class="mb-1">View your complete Discogs profile</p>
-                </a>
-
-                <a href="{{ path('random_releases') }}" class="list-group-item list-group-item-action">
-                    <h5 class="mb-1">🎲 Random Releases</h5>
-                    <p class="mb-1">Discover random releases from popular artists</p>
-                </a>
+        <div class="col-md-4">
+            <h3>👤 User Information</h3>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <table class="table table-borderless mb-0">
+                        <tbody>
+                        <tr><td><strong>Username:</strong></td><td>{{ identity.username }}</td></tr>
+                        <tr><td><strong>Resource URL:</strong></td><td><a href="{{ identity.resource_url }}" target="_blank" class="text-decoration-none">View Profile</a></td></tr>
+                        <tr><td><strong>Consumer:</strong></td><td>{{ identity.consumer_name }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-
-            <h4 class="mt-4">Direct Links to Example Data:</h4>
-            <ul class="list-unstyled">
-                <li><a href="{{ path('artist_detail', {'id': 8760}) }}">Pink Floyd (Artist #8760)</a></li>
-                <li><a href="{{ path('release_detail', {'id': 1}) }}">Release #1</a></li>
-                <li><a href="{{ path('artist_detail', {'id': 82730}) }}">The Beatles (Artist #82730)</a></li>
-            </ul>
         </div>
+
+        <div class="col-md-8">
+            <h3>🚀 Demo Features</h3>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">🔍 Search & Discovery</h5>
+                            <div class="d-grid gap-2">
+                                <a href="{{ path('search') }}" class="btn btn-outline-primary btn-sm">🔍 Search Database</a>
+                                <a href="{{ path('random_releases') }}" class="btn btn-outline-primary btn-sm">🎲 Random Releases</a>
+                                <a href="{{ path('marketplace') }}" class="btn btn-outline-primary btn-sm">� Marketplace</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">👤 Your Collection</h5>
+                            <div class="d-grid gap-2">
+                                <a href="{{ path('user_collection') }}" class="btn btn-outline-success btn-sm">📀 My Collection</a>
+                                <a href="{{ path('user_wantlist') }}" class="btn btn-outline-success btn-sm">💝 My Wantlist</a>
+                                <a href="{{ path('user_lists') }}" class="btn btn-outline-success btn-sm">� My Lists</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">📦 Marketplace & Orders</h5>
+                            <div class="d-grid gap-2">
+                                <a href="{{ path('user_inventory') }}" class="btn btn-outline-warning btn-sm">📦 My Inventory</a>
+                                <a href="{{ path('user_orders') }}" class="btn btn-outline-warning btn-sm">� My Orders</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">ℹ️ Profile & Info</h5>
+                            <div class="d-grid gap-2">
+                                <a href="{{ path('user_profile') }}" class="btn btn-outline-info btn-sm">👤 My Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3>🎯 Quick Access to Examples</h3>
+            <div class="row">
+                <div class="col-md-3 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body py-3">
+                            <h6 class="card-title">🎵 Artists</h6>
+                            <div class="d-grid gap-1">
+                                <a href="{{ path('artist_detail', {'id': 8760}) }}" class="btn btn-link btn-sm">Pink Floyd</a>
+                                <a href="{{ path('artist_detail', {'id': 82730}) }}" class="btn btn-link btn-sm">The Beatles</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body py-3">
+                            <h6 class="card-title">💿 Releases</h6>
+                            <div class="d-grid gap-1">
+                                <a href="{{ path('release_detail', {'id': 1}) }}" class="btn btn-link btn-sm">Release #1</a>
+                                <a href="{{ path('release_detail', {'id': 249504}) }}" class="btn btn-link btn-sm">Dark Side of the Moon</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body py-3">
+                            <h6 class="card-title">🏷️ Labels</h6>
+                            <div class="d-grid gap-1">
+                                <a href="{{ path('label_detail', {'id': 1}) }}" class="btn btn-link btn-sm">Blue Note</a>
+                                <a href="{{ path('label_detail', {'id': 157}) }}" class="btn btn-link btn-sm">EMI</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <div class="card text-center">
+                        <div class="card-body py-3">
+                            <h6 class="card-title">🎯 Masters</h6>
+                            <div class="d-grid gap-1">
+                                <a href="{{ path('master_detail', {'id': 5427}) }}" class="btn btn-link btn-sm">Dark Side of the Moon</a>
+                                <a href="{{ path('master_detail', {'id': 11767}) }}" class="btn btn-link btn-sm">Abbey Road</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-warning mt-4" role="alert">
+        <h5 class="alert-heading">⚠️ Demo Application Notice</h5>
+        <p><strong>This is a demonstration application for educational purposes only.</strong></p>
+        <p class="mb-2">Please note:</p>
+        <ul class="mb-2">
+            <li>🚫 Not intended for production use</li>
+            <li>📋 Respect Discogs' terms of service</li>
+            <li>💾 Implement caching in production to avoid API rate limits</li>
+            <li>📖 Review <a href="https://www.discogs.com/developers/#page:home,header:home-general-guidelines" target="_blank" class="alert-link">Discogs API Guidelines</a></li>
+        </ul>
+        <p class="mb-0">Use this demo responsibly and consider the impact on Discogs' servers.</p>
+    </div>
+
+    <div class="alert alert-info mt-4" role="alert">
+        <h5 class="alert-heading">💡 About This Demo</h5>
+        <p class="mb-0">This demo showcases the comprehensive features of the <strong>calliostro/discogs-bundle</strong> with support for PHP 8.1-8.4 and Symfony 6.4-8.0. All API endpoints are authenticated and ready to explore!</p>
     </div>
 {% endblock body %}

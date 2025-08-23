@@ -1,0 +1,210 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order Details{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('default_index') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('user_orders') }}">My Orders</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Order #{{ order.id }}</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-5">📦 Order Details</h1>
+        {% if order.status is defined %}
+            <span class="badge bg-{{ order.status == 'Shipped' ? 'success' : (order.status == 'Cancelled' ? 'danger' : 'primary') }} fs-6">
+                {{ order.status }}
+            </span>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">📋 Order Information</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Order ID:</dt>
+                        <dd class="col-sm-9">{{ order.id }}</dd>
+                        
+                        {% if order.created is defined %}
+                            <dt class="col-sm-3">Created:</dt>
+                            <dd class="col-sm-9">{{ order.created|date('Y-m-d H:i:s') }}</dd>
+                        {% endif %}
+                        
+                        {% if order.last_activity is defined %}
+                            <dt class="col-sm-3">Last Activity:</dt>
+                            <dd class="col-sm-9">{{ order.last_activity|date('Y-m-d H:i:s') }}</dd>
+                        {% endif %}
+                        
+                        {% if order.seller is defined %}
+                            <dt class="col-sm-3">Seller:</dt>
+                            <dd class="col-sm-9">
+                                {{ order.seller.username }}
+                                {% if order.seller.stats is defined and order.seller.stats.rating %}
+                                    <span class="badge bg-warning text-dark">⭐ {{ order.seller.stats.rating }}%</span>
+                                {% endif %}
+                            </dd>
+                        {% endif %}
+                        
+                        {% if order.buyer is defined %}
+                            <dt class="col-sm-3">Buyer:</dt>
+                            <dd class="col-sm-9">{{ order.buyer.username }}</dd>
+                        {% endif %}
+                        
+                        {% if order.shipping_address is defined %}
+                            <dt class="col-sm-3">Shipping Address:</dt>
+                            <dd class="col-sm-9">
+                                {{ order.shipping_address.name }}<br>
+                                {{ order.shipping_address.address }}<br>
+                                {% if order.shipping_address.address2 %}{{ order.shipping_address.address2 }}<br>{% endif %}
+                                {{ order.shipping_address.city }}, {{ order.shipping_address.region }} {{ order.shipping_address.postal_code }}<br>
+                                {{ order.shipping_address.country }}
+                            </dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+            
+            {% if order.items is defined and order.items|length > 0 %}
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">🎵 Order Items ({{ order.items|length }})</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Release</th>
+                                        <th>Artist</th>
+                                        <th>Condition</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order.items %}
+                                        <tr>
+                                            <td>
+                                                {% if item.release is defined and item.release.basic_information is defined %}
+                                                    <div class="d-flex align-items-center">
+                                                        {% if item.release.basic_information.thumb %}
+                                                            <img src="{{ item.release.basic_information.thumb }}" class="me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="{{ item.release.basic_information.title }}">
+                                                        {% endif %}
+                                                        <div>
+                                                            <strong>{{ item.release.basic_information.title }}</strong><br>
+                                                            <small class="text-muted">
+                                                                {% if item.release.basic_information.labels is defined and item.release.basic_information.labels|length > 0 %}
+                                                                    🏷️ {{ item.release.basic_information.labels[0].name }}
+                                                                {% endif %}
+                                                                {% if item.release.basic_information.year is defined %}
+                                                                    • {{ item.release.basic_information.year }}
+                                                                {% endif %}
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if item.release is defined and item.release.basic_information is defined and item.release.basic_information.artists is defined %}
+                                                    {% for artist in item.release.basic_information.artists %}
+                                                        <a href="{{ path('artist_detail', {'id': artist.id}) }}" class="text-decoration-none">
+                                                            {{ artist.name }}
+                                                        </a>{% if not loop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if item.media_condition is defined %}
+                                                    <span class="badge bg-secondary">{{ item.media_condition }}</span>
+                                                {% endif %}
+                                                {% if item.sleeve_condition is defined %}
+                                                    <br><small class="text-muted">Sleeve: {{ item.sleeve_condition }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if item.price is defined %}
+                                                    <strong class="text-success">{{ item.price.currency }}{{ item.price.value }}</strong>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">💰 Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    {% if order.total is defined %}
+                        <div class="d-flex justify-content-between">
+                            <span>Subtotal:</span>
+                            <span>{{ order.total.currency }}{{ (order.total.value - (order.shipping.value ?? 0))|number_format(2) }}</span>
+                        </div>
+                    {% endif %}
+                    
+                    {% if order.shipping is defined %}
+                        <div class="d-flex justify-content-between">
+                            <span>Shipping:</span>
+                            <span>{{ order.shipping.currency }}{{ order.shipping.value|number_format(2) }}</span>
+                        </div>
+                        <hr>
+                    {% endif %}
+                    
+                    {% if order.total is defined %}
+                        <div class="d-flex justify-content-between fw-bold">
+                            <span>Total:</span>
+                            <span class="text-success">{{ order.total.currency }}{{ order.total.value|number_format(2) }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if order.messages is defined and order.messages|length > 0 %}
+                <div class="card shadow-sm mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">💬 Messages</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for message in order.messages %}
+                            <div class="mb-3 p-2 bg-light rounded">
+                                <div class="d-flex justify-content-between">
+                                    <strong>{{ message.from.username }}</strong>
+                                    <small class="text-muted">{{ message.timestamp|date('Y-m-d H:i') }}</small>
+                                </div>
+                                <p class="mb-0 mt-1">{{ message.message|nl2br }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            
+            <div class="card shadow-sm mt-3">
+                <div class="card-body text-center">
+                    {% if order.uri is defined %}
+                        <a href="https://www.discogs.com{{ order.uri }}" target="_blank" class="btn btn-primary">
+                            <i class="bi bi-box-arrow-up-right"></i> View on Discogs
+                        </a>
+                    {% endif %}
+                    
+                    <a href="{{ path('user_orders') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

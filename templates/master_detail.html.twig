@@ -1,0 +1,188 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ master.title }} - Master Release{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('default_index') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ master.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-4">
+            {% if master.images is defined and master.images|length > 0 %}
+                <img src="{{ master.images[0].uri }}" class="img-fluid rounded shadow" alt="{{ master.title }}">
+            {% else %}
+                <div class="bg-light p-5 text-center rounded shadow">
+                    <i class="bi bi-disc fs-1 text-muted"></i>
+                    <p class="text-muted mt-2">No image available</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-8">
+            <h1 class="display-5">🎯 {{ master.title }}</h1>
+            
+            {% if master.artists is defined and master.artists|length > 0 %}
+                <h4 class="text-muted">
+                    {% for artist in master.artists %}
+                        <a href="{{ path('artist_detail', {'id': artist.id}) }}" class="text-decoration-none">
+                            {{ artist.name }}
+                        </a>
+                        {% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </h4>
+            {% endif %}
+
+            <div class="mt-3">
+                <div class="row">
+                    {% if master.year is defined and master.year %}
+                        <div class="col-sm-6">
+                            <span class="badge bg-primary">📅 {{ master.year }}</span>
+                        </div>
+                    {% endif %}
+                    {% if master.main_release is defined %}
+                        <div class="col-sm-6">
+                            <a href="{{ path('release_detail', {'id': master.main_release}) }}" class="badge bg-success text-decoration-none">
+                                🎵 Main Release
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if master.genres is defined and master.genres|length > 0 %}
+                <div class="mt-3">
+                    <h5>🎭 Genres</h5>
+                    {% for genre in master.genres %}
+                        <span class="badge bg-secondary me-1">{{ genre }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if master.styles is defined and master.styles|length > 0 %}
+                <div class="mt-3">
+                    <h5>🎨 Styles</h5>
+                    {% for style in master.styles %}
+                        <span class="badge bg-info me-1">{{ style }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if master.notes is defined and master.notes %}
+                <div class="mt-3">
+                    <h5>📝 Notes</h5>
+                    <p class="text-muted">{{ master.notes|nl2br }}</p>
+                </div>
+            {% endif %}
+
+            {% if master.tracklist is defined and master.tracklist|length > 0 %}
+                <div class="mt-3">
+                    <h5>🎵 Tracklist</h5>
+                    <ol class="list-group list-group-numbered">
+                        {% for track in master.tracklist %}
+                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold">{{ track.title }}</div>
+                                    {% if track.artists is defined and track.artists|length > 0 %}
+                                        <small class="text-muted">
+                                            {% for artist in track.artists %}
+                                                {{ artist.name }}{% if not loop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </small>
+                                    {% endif %}
+                                </div>
+                                {% if track.duration is defined and track.duration %}
+                                    <span class="badge bg-primary rounded-pill">{{ track.duration }}</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if versions is defined and versions.versions|length > 0 %}
+        <div class="mt-5">
+            <h3>💽 Versions & Pressings</h3>
+            <div class="row">
+                {% for version in versions.versions %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 shadow-sm">
+                            {% if version.thumb is defined and version.thumb %}
+                                <img src="{{ version.thumb }}" class="card-img-top" alt="{{ version.title }}" style="height: 150px; object-fit: cover;">
+                            {% endif %}
+                            
+                            <div class="card-body">
+                                <h6 class="card-title">{{ version.title }}</h6>
+                                <div class="d-flex flex-wrap gap-1 mb-2">
+                                    {% if version.format is defined and version.format|length > 0 %}
+                                        {% for format in version.format %}
+                                            <span class="badge bg-secondary">{{ format }}</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                
+                                {% if version.country is defined and version.country %}
+                                    <p class="card-text text-muted small">🌍 {{ version.country }}</p>
+                                {% endif %}
+                                
+                                {% if version.released is defined and version.released %}
+                                    <p class="card-text text-muted small">📅 {{ version.released }}</p>
+                                {% endif %}
+                                
+                                {% if version.label is defined and version.label|length > 0 %}
+                                    <p class="card-text text-muted small">
+                                        🏷️ 
+                                        {% for label in version.label %}
+                                            <a href="{{ path('label_detail', {'id': label.id}) }}" class="text-decoration-none">
+                                                {{ label.name }}
+                                            </a>{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                {% endif %}
+                                
+                                <a href="{{ path('release_detail', {'id': version.id}) }}" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-eye"></i> View Version
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if versions.pagination is defined and versions.pagination.pages > 1 %}
+                <nav aria-label="Master versions pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if versions.pagination.page > 1 %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ path('master_detail', {'id': master.id, 'page': versions.pagination.page - 1}) }}">Previous</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for page in 1..versions.pagination.pages %}
+                            {% if page == versions.pagination.page %}
+                                <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ path('master_detail', {'id': master.id, 'page': page}) }}">{{ page }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if versions.pagination.page < versions.pagination.pages %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ path('master_detail', {'id': master.id, 'page': versions.pagination.page + 1}) }}">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

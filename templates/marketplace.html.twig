@@ -1,0 +1,152 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Marketplace{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('default_index') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Marketplace</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-5">🛒 Marketplace</h1>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <form method="get" action="{{ path('marketplace') }}">
+                <div class="input-group">
+                    <input type="text" class="form-control form-control-lg" name="q" 
+                           placeholder="Search for releases in the marketplace..." 
+                           value="{{ searchQuery }}" required>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if searchQuery and listings is null %}
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-exclamation-triangle"></i>
+            <strong>No results found.</strong> Try adjusting your search terms.
+        </div>
+    {% elseif listings is defined and listings is not null and listings.results is defined and listings.results|length > 0 %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i>
+            Found {{ listings.pagination.items ?? listings.results|length }} results for "<strong>{{ searchQuery }}</strong>"
+        </div>
+
+        <div class="row">
+            {% for release in listings.results %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        {% if release.thumb is defined and release.thumb %}
+                            <img src="{{ release.thumb }}" class="card-img-top" alt="{{ release.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-disc fs-1 text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title">{{ release.title }}</h6>
+                            
+                            <div class="d-flex flex-wrap gap-1 mb-2">
+                                {% if release.year is defined and release.year %}
+                                    <span class="badge bg-primary">📅 {{ release.year }}</span>
+                                {% endif %}
+                                
+                                {% if release.format is defined and release.format|length > 0 %}
+                                    {% for format in release.format %}
+                                        <span class="badge bg-secondary">{{ format }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            
+                            {% if release.label is defined and release.label|length > 0 %}
+                                <p class="card-text text-muted small">
+                                    🏷️ {{ release.label|join(', ') }}
+                                </p>
+                            {% endif %}
+                            
+                            {% if release.country is defined and release.country %}
+                                <p class="card-text text-muted small">
+                                    🌍 {{ release.country }}
+                                </p>
+                            {% endif %}
+                            
+                            <div class="mt-auto">
+                                <div class="d-flex gap-2">
+                                    <a href="{{ path('release_detail', {'id': release.id}) }}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </a>
+                                    
+                                    {% if release.master_id is defined and release.master_id %}
+                                        <a href="{{ path('master_detail', {'id': release.master_id}) }}" class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-disc"></i> Master
+                                        </a>
+                                    {% endif %}
+                                </div>
+                                
+                                <small class="text-muted d-block mt-2">
+                                    💰 Check Discogs marketplace for current prices
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if listings.pagination is defined and listings.pagination.pages > 1 %}
+            <nav aria-label="Marketplace pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if listings.pagination.page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('marketplace', {'q': searchQuery, 'page': listings.pagination.page - 1}) }}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for page in 1..listings.pagination.pages %}
+                        {% if page == listings.pagination.page %}
+                            <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ path('marketplace', {'q': searchQuery, 'page': page}) }}">{{ page }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if listings.pagination.page < listings.pagination.pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('marketplace', {'q': searchQuery, 'page': listings.pagination.page + 1}) }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% elseif not searchQuery %}
+        <div class="text-center py-5">
+            <i class="bi bi-search display-1 text-muted"></i>
+            <h3 class="mt-3 text-muted">Search the Marketplace</h3>
+            <p class="text-muted">Enter a search term above to find releases available for purchase.</p>
+            
+            <div class="mt-4">
+                <h5>💡 Popular Searches:</h5>
+                <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+                    <a href="{{ path('marketplace', {'q': 'Pink Floyd'}) }}" class="btn btn-outline-primary btn-sm">Pink Floyd</a>
+                    <a href="{{ path('marketplace', {'q': 'The Beatles'}) }}" class="btn btn-outline-primary btn-sm">The Beatles</a>
+                    <a href="{{ path('marketplace', {'q': 'Led Zeppelin'}) }}" class="btn btn-outline-primary btn-sm">Led Zeppelin</a>
+                    <a href="{{ path('marketplace', {'q': 'Miles Davis'}) }}" class="btn btn-outline-primary btn-sm">Miles Davis</a>
+                    <a href="{{ path('marketplace', {'q': 'Blue Note'}) }}" class="btn btn-outline-primary btn-sm">Blue Note</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
