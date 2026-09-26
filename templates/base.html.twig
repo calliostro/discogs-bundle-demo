@@ -28,7 +28,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{{ path('default_index') }}">
-                    🎵 Discogs Bundle Demo
+                    🎵 Discogs Bundle Demo <span class="badge bg-secondary fs-6">v3.x</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
@@ -67,6 +67,9 @@
         </nav>
 
         <main class="container-fluid mt-4">
+            <div class="alert alert-info border-0 shadow-sm py-2 mb-4 text-center small">
+                💡 <strong>Developer Sandbox:</strong> Reference implementation demonstrating Symfony integration with <a href="https://github.com/calliostro/discogs-bundle/tree/3.x" target="_blank" class="alert-link">calliostro/discogs-bundle</a> (v3.x). For educational and testing purposes.
+            </div>
             {% for flash_error in app.flashes('error') %}
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     {{ flash_error }}
